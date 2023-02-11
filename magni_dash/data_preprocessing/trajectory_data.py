@@ -8,7 +8,7 @@ def process_data(
 ) -> pd.DataFrame:
     """Process raw trajectories data
     1) Remove third dimension column
-    2) Remove coluimns with all NaNs values
+    2) Remove columns with all NaNs values
 
     Parameters
     ----------
@@ -25,5 +25,5 @@ def process_data(
     if TRAJECTORY_DATA_TYPE == "2D":
         df_out = raw_df[raw_df.columns[~raw_df.columns.str.endswith(height_suffix)]]
     df_out = df_out.dropna(axis=1, how="all")
-    df_out.interpolate()
+    df_out = df_out.interpolate()
     return df_out
