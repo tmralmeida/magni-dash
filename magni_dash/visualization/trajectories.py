@@ -72,7 +72,6 @@ def play_double_view_trajectories(input_files: Dict, processed_dfs: Dict):
 
     regex_pattern = re.compile(r"H\d+")
     helmet_number = regex_pattern.findall(input_files["SC6A"])[0][1:]
-
     fig = go.Figure(
         [
             go.Scatter(

@@ -5,7 +5,6 @@ from magni_dash.visualization.trajectories import (
     play_single_trajectory,
     play_double_view_trajectories,
 )
-from magni_dash.utils import clear_session_state
 from magni_dash.config.constants import TRAJECTORY_SAMPLES_PATH
 
 
@@ -20,10 +19,9 @@ modes = [
 page = st.radio("Mode", modes)
 
 
+files = os.listdir(TRAJECTORY_SAMPLES_PATH)
+files_target = list(filter(lambda x: x.endswith("pp.tsv"), files))
 if page == "raw single-view data":
-    clear_session_state()
-    files = os.listdir(TRAJECTORY_SAMPLES_PATH)
-    files_target = list(filter(lambda x: x.endswith("pp.tsv"), files))
     option = st.selectbox(
         label="File", options=files_target, key="input_file", label_visibility="visible"
     )
@@ -34,9 +32,6 @@ if page == "raw single-view data":
             processed_df=processed_df,
         )
 elif page == "raw double-view data (2 plots)":
-    clear_session_state()
-    files = os.listdir(TRAJECTORY_SAMPLES_PATH)
-    files_target = list(filter(lambda x: x.endswith("pp.tsv"), files))
     splitted_file_name = list(map(lambda x: x.split("SC6"), files_target))
     scenarios6a_files = [
         sample for sample in splitted_file_name if list(sample[1])[0] == "A"
@@ -70,9 +65,6 @@ elif page == "raw double-view data (2 plots)":
         play_single_trajectory(input_file=scenario6a_file, processed_df=df_a)
         play_single_trajectory(input_file=scenario6b_file, processed_df=df_b)
 elif page == "raw double-view data (overlayed)":
-    clear_session_state()
-    files = os.listdir(TRAJECTORY_SAMPLES_PATH)
-    files_target = list(filter(lambda x: x.endswith("pp.tsv"), files))
     splitted_file_name = list(map(lambda x: x.split("SC6"), files_target))
     scenarios6a_files = [
         sample for sample in splitted_file_name if list(sample[1])[0] == "A"
@@ -110,9 +102,7 @@ elif page == "raw double-view data (overlayed)":
         )
 
 elif page == "single-view synchronized data":
-    clear_session_state()
     st.write("TODO")
 
 elif page == "double-view synchronized data":
-    clear_session_state()
     st.write("TODO")

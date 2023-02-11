@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 
-@st.cache
+@st.cache_data
 def load_df(df_path: str, sep: str, header: int, index_col: str):
     """Load a csv pandas dataframe.
 
