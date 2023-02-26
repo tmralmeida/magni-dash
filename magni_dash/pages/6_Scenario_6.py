@@ -7,8 +7,14 @@ from magni_dash.visualization.trajectories import (
 )
 from magni_dash.config.constants import TRAJECTORY_SAMPLES_PATH
 
+st.set_page_config(page_title="Scenario 6")
+st.markdown("# Scenario 6")
+st.sidebar.header("Scenario 6")
+st.write(
+    """Scenario 6 description"""
+)
 
-st.title("Magni Dashboard")
+
 modes = [
     "raw data single view ",
     "raw data double view (2 plots)",

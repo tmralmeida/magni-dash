@@ -14,5 +14,5 @@ pip install .
 Run:
 
 ```
-streamlit run /home/tmr/Documents/PhD/My_PhD/code/magni-dash/magni_dash/run_dash.py
+streamlit run magni_dash/Welcome.py
 ```
