@@ -3,7 +3,7 @@ import re
 import streamlit as st
 from collections import namedtuple
 from magni_dash.st_components.cache import load_df, process_data, extract_features
-from magni_dash.st_components.scenario6 import *
+from magni_dash.st_components.scenario6 import run_configs
 from magni_dash.utils.scenario6 import get_files_name_mapping
 from magni_dash.visualization.trajectories import (
     get_single_trajectory,
