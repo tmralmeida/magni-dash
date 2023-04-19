@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Union, List
 import logging
 import pandas as pd
 import numpy as np
@@ -14,14 +14,14 @@ class SpatioTemporalFeatures:
         out_df = input_df.diff().add_suffix("_delta").fillna(0).sort_index(axis=1)
 
         delta_cols = set(out_df.columns) - initial_columns
-        print(f"{delta_cols} created!")
+        LOGGER.info(f"{delta_cols} created!")  # noqa: W1203
         return out_df
 
     @staticmethod
-    def get_displacement(input_df: pd.DataFrame, element_name: str):
+    def get_displacement(input_df: pd.DataFrame):
         out_df = input_df.copy()
-        out_df[f"{element_name}_{input_df.name}_displacement"] = (
-            np.sqrt(np.square(out_df).sum(axis=1)) / 1000
+        out_df[f"{input_df.name}_displacement"] = np.sqrt(
+            np.square(out_df).sum(axis=1)
         )  # in mm
         return out_df
 
@@ -29,19 +29,49 @@ class SpatioTemporalFeatures:
     def get_speed(
         input_df: pd.DataFrame,
         time_col_name: str,
-        out_col_name: Optional[str] = "speed",
-    ):
+        element_name: Union[str, List[str]],
+        out_col_name: str = "speed",
+    ) -> pd.DataFrame:
+        element_name = [element_name] if isinstance(element_name, str) else element_name
         out_df = input_df.copy()
 
         if time_col_name not in input_df.columns:
             raise ValueError(f"{time_col_name} not in df's columns")
 
         delta_df = SpatioTemporalFeatures.get_delta_columns(out_df)
-        helmet_pat, darko_pat = r"Helmet_(\d+ - \d).*", r"DARKO_Robot.*"
-        helmets_disp = delta_df.groupby(
-            delta_df.columns.str.extract(helmet_pat, expand=False),
-            axis=1,
-        ).apply(SpatioTemporalFeatures.get_displacement, "Helmet")
-        helmets_disp.columns = helmets_disp.columns.droplevel(0)
-        helmets_disp = helmets_disp.rename_axis(None, axis=1)
-        return helmets_disp
+        speed_dfs = []
+        for element in element_name:
+            element_pat = (
+                r"DARKO_Robot - (\d) "
+                if element == "Darko_Robot"
+                else r"Helmet_(\d+ - \d).*"
+            )
+            elements_disp = delta_df.groupby(
+                delta_df.columns.str.extract(element_pat, expand=False),
+                axis=1,
+            ).apply(SpatioTemporalFeatures.get_displacement)
+
+            elements_disp.columns = elements_disp.columns.droplevel(0)
+            elements_disp = elements_disp.join(
+                delta_df.loc[:, [f"{time_col_name}_delta"]]
+            )
+
+            elements_disp = elements_disp.rename_axis(None, axis=1)
+
+            disp_cols = elements_disp.columns[
+                elements_disp.columns.str.endswith("displacement")
+            ]
+            n_markers = len(disp_cols)
+            speed_cols = [
+                f"{out_col_name}_{element}-{i} (m/s)" for i in range(1, n_markers + 1)
+            ]
+            elements_disp.loc[:, speed_cols] = (
+                elements_disp[disp_cols]
+                .div(elements_disp["Time_delta"].values, axis=0)
+                .values
+            )
+            LOGGER.info(f"{speed_cols} created successfully!")  # noqa: W1203
+            speed_dfs.append(elements_disp)
+        speed_df = pd.concat(speed_dfs, axis=1, ignore_index=False)
+
+        return speed_df

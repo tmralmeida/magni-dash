@@ -1,7 +1,7 @@
 import streamlit as st
 
-st.set_page_config(page_title="Welcome")
-st.write("# Welcome to Magni Dashboard! 👋")
+st.set_page_config(page_title="Welcome", page_icon="👋")
+st.write("# Welcome to Magni Dashboard!")
 
 
 st.markdown(
