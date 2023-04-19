@@ -2,7 +2,7 @@
 Dashboard for Magni dataset.
 
 
-# Install package
+# Package installation
 
 ```
 pip install .

@@ -152,18 +152,29 @@ def get_double_overlayed_view(
 
     features_df_a = inputs_specfications["SC6A"].features_df
     features_df_b = inputs_specfications["SC6B"].features_df
-    if features_df_a is not None and features_df_b is not None:
-        features_df_a["Scenario"] = "6A"
-        features_df_b["Scenario"] = "6B"
-        features_df = pd.concat([features_df_a, features_df_b], axis=0)
-        features_df = features_df.sort_index()
-        fig_speed = px.line(
-            features_df[:slider],
-            x="Frame",
-            y=f"speed_Helmet_{helmet_number}-{marker} (m/s)",
-            color="Scenario",
-            title=f"Speed profile from Helmet {helmet_number} ",
-            color_discrete_sequence=["blue", "red"]
+
+    no_ex_cols = set(features_df_a.columns).difference(set(features_df_b.columns))
+    if len(no_ex_cols) > 0:
+        st.error(
+            "Speed profile not available. Probably, trajectory data with misclassifications!",
+            icon="🚨",
         )
-        figs += [fig_speed]
+        return figs
+
+    if features_df_a is None or features_df_b is None:
+        return figs
+
+    features_df_a["Scenario"] = "6A"
+    features_df_b["Scenario"] = "6B"
+    features_df = pd.concat([features_df_a, features_df_b], axis=0)
+    features_df = features_df.sort_index()
+    fig_speed = px.line(
+        features_df[:slider],
+        x="Frame",
+        y=f"speed_Helmet_{helmet_number}-{marker} (m/s)",
+        color="Scenario",
+        title=f"Speed profile from Helmet {helmet_number} ",
+        color_discrete_sequence=["blue", "red"],
+    )
+    figs += [fig_speed]
     return figs
