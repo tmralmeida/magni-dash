@@ -8,7 +8,7 @@ from magni_dash.config.constants import TRAJECTORY_DATA_TYPE
 
 
 @st.cache_data
-def load_df(df_path: str, sep: str, header: int, index_col: str):
+def load_df(df_path: str, sep: str, header: int, index_col: str) -> pd.DataFrame:
     """Load a csv pandas dataframe.
 
     Parameters
@@ -60,7 +60,20 @@ def process_data(raw_df: pd.DataFrame, height_suffix: str = "Z") -> pd.DataFrame
 
 
 @st.cache_data
-def extract_features(input_df: pd.DataFrame, helmet_number: str):
+def extract_features(input_df: pd.DataFrame, helmet_number: str) -> pd.DataFrame:
+    """Extract features to be used in the profiles section such as speed
+
+    Parameters
+    ----------
+    input_df
+        raw pandas DataFrame
+    helmet_number
+        number of helmet
+
+    Returns
+    -------
+        pandas DataFrame with the respective features computed
+    """
     out_df = input_df.copy()
     out_df[
         out_df.columns[
