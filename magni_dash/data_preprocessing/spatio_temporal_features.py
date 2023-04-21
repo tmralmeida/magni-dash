@@ -43,14 +43,13 @@ class SpatioTemporalFeatures:
         for element in element_name:
             element_pat = (
                 r"DARKO_Robot - (\d) "
-                if element == "Darko_Robot"
-                else r"Helmet_(\d+ - \d).*"
+                if element == "Darko_Robot" or element == "DARKO"
+                else rf"{element} - (\d).*"
             )
             elements_disp = delta_df.groupby(
                 delta_df.columns.str.extract(element_pat, expand=False),
                 axis=1,
             ).apply(SpatioTemporalFeatures.get_displacement)
-
             elements_disp.columns = elements_disp.columns.droplevel(0)
             elements_disp = elements_disp.join(
                 delta_df.loc[:, [f"{time_col_name}_delta"]]
@@ -63,7 +62,7 @@ class SpatioTemporalFeatures:
             ]
             n_markers = len(disp_cols)
             speed_cols = [
-                f"{out_col_name}_{element}-{i} (m/s)" for i in range(1, n_markers + 1)
+                f"{element} - {i} {out_col_name} (m/s)" for i in range(1, n_markers + 1)
             ]
             elements_disp.loc[:, speed_cols] = (
                 elements_disp[disp_cols]

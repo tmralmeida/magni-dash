@@ -1,4 +1,3 @@
-import re
 from typing import Dict, Optional
 import plotly.express as px
 import plotly.graph_objects as go
@@ -7,7 +6,7 @@ import streamlit as st
 
 
 def get_single_trajectory(
-    helmet_number: str,
+    helmet_label: str,
     marker: str,
     input_file: str,
     processed_df: pd.DataFrame,
@@ -15,7 +14,7 @@ def get_single_trajectory(
     features_df: Optional[pd.DataFrame] = None,
 ):
     idx_scenario = input_file.find("SC6")
-    scenario_name = input_file[idx_scenario : idx_scenario + 4]
+    scenario_name = input_file[idx_scenario: idx_scenario + 4]
     min_frame, max_frame = int(processed_df.index.min()), int(processed_df.index.max())
     slider = tab_component.slider(
         label=f"Frame for {scenario_name}",
@@ -28,29 +27,30 @@ def get_single_trajectory(
 
     fig = px.line(
         processed_df[:slider],
-        x=f"Helmet_{helmet_number} - {marker} X",
-        y=f"Helmet_{helmet_number} - {marker} Y",
-        title=f"Trajectory data from Helmet {helmet_number} in {scenario_name}",
+        x=f"{helmet_label} - {marker} X",
+        y=f"{helmet_label} - {marker} Y",
+        title=f"Trajectory data from {helmet_label} in {scenario_name}",
     )
     fig.update_layout(
         xaxis=dict(showgrid=False),
         yaxis=dict(showgrid=False),
         xaxis_range=[
-            processed_df[f"Helmet_{helmet_number} - {marker} X"].min(),
-            processed_df[f"Helmet_{helmet_number} - {marker} X"].max(),
+            processed_df[f"{helmet_label} - {marker} X"].min(),
+            processed_df[f"{helmet_label} - {marker} X"].max(),
         ],
         yaxis_range=[
-            processed_df[f"Helmet_{helmet_number} - {marker} Y"].min(),
-            processed_df[f"Helmet_{helmet_number} - {marker} Y"].max(),
+            processed_df[f"{helmet_label} - {marker} Y"].min(),
+            processed_df[f"{helmet_label} - {marker} Y"].max(),
         ],
+        margin=dict(l=0, r=0, t=20, b=20),
     )
     figs = [fig]
     if features_df is not None:
         fig_speed = px.line(
             features_df[:slider],
             x="Frame",
-            y=f"speed_Helmet_{helmet_number}-{marker} (m/s)",
-            title=f"Speed profile from Helmet {helmet_number} in {scenario_name}",
+            y=f"{helmet_label} - {marker} speed (m/s)",
+            title=f"Speed profile from {helmet_label} in {scenario_name}",
         )
         figs += [fig_speed]
 
@@ -61,6 +61,7 @@ def get_double_overlayed_view(
     inputs_specfications: Dict,
     marker,
 ):
+    helmet_label = inputs_specfications["SC6A"].helmet_label
     trajectory_dfa = inputs_specfications["SC6A"].trajectory_df
     trajectory_dfb = inputs_specfications["SC6B"].trajectory_df
 
@@ -80,22 +81,17 @@ def get_double_overlayed_view(
         key="slider_overlayed",
     )
 
-    regex_pattern = re.compile(r"H\d+")
-    helmet_number = regex_pattern.findall(inputs_specfications["SC6A"].input_file)[0][
-        1:
-    ]
-
     fig = go.Figure(
         [
             go.Scatter(
                 name="SC6A",
                 x=trajectory_dfa.loc[
                     : min(slider, int(trajectory_dfa.index.max())),
-                    f"Helmet_{helmet_number} - {marker} X",
+                    f"{helmet_label} - {marker} X",
                 ],
                 y=trajectory_dfa.loc[
                     : min(slider, int(trajectory_dfa.index.max())),
-                    f"Helmet_{helmet_number} - {marker} Y",
+                    f"{helmet_label} - {marker} Y",
                 ],
                 mode="lines",
                 marker=dict(color="blue"),
@@ -104,39 +100,40 @@ def get_double_overlayed_view(
                 name="SC6B",
                 x=trajectory_dfb.loc[
                     : min(slider, int(trajectory_dfb.index.max())),
-                    f"Helmet_{helmet_number} - {marker} X",
+                    f"{helmet_label} - {marker} X",
                 ],
                 y=trajectory_dfb.loc[
                     : min(slider, int(trajectory_dfb.index.max())),
-                    f"Helmet_{helmet_number} - {marker} Y",
+                    f"{helmet_label} - {marker} Y",
                 ],
                 mode="lines",
                 marker=dict(color="red"),
             ),
         ]
     )
+    fig.update_layout(margin=dict(l=0, r=0, t=20, b=20))
 
     min_x, max_x, min_y, max_y = (
         min(
-            trajectory_dfa[f"Helmet_{helmet_number} - {marker} X"].min(),
-            trajectory_dfb[f"Helmet_{helmet_number} - {marker} X"].min(),
+            trajectory_dfa[f"{helmet_label} - {marker} X"].min(),
+            trajectory_dfb[f"{helmet_label} - {marker} X"].min(),
         ),
         max(
-            trajectory_dfa[f"Helmet_{helmet_number} - {marker} X"].max(),
-            trajectory_dfb[f"Helmet_{helmet_number} - {marker} X"].max(),
+            trajectory_dfa[f"{helmet_label} - {marker} X"].max(),
+            trajectory_dfb[f"{helmet_label} - {marker} X"].max(),
         ),
         min(
-            trajectory_dfa[f"Helmet_{helmet_number} - {marker} Y"].min(),
-            trajectory_dfb[f"Helmet_{helmet_number} - {marker} Y"].min(),
+            trajectory_dfa[f"{helmet_label} - {marker} Y"].min(),
+            trajectory_dfb[f"{helmet_label} - {marker} Y"].min(),
         ),
         max(
-            trajectory_dfa[f"Helmet_{helmet_number} - {marker} Y"].max(),
-            trajectory_dfb[f"Helmet_{helmet_number} - {marker} Y"].max(),
+            trajectory_dfa[f"{helmet_label} - {marker} Y"].max(),
+            trajectory_dfb[f"{helmet_label} - {marker} Y"].max(),
         ),
     )
 
     fig.update_layout(
-        title=f"Trajectory data from Helmet {helmet_number}",
+        title=f"Trajectory data from {helmet_label}",
         xaxis=dict(showgrid=False),
         yaxis=dict(showgrid=False),
         xaxis_range=[
@@ -171,9 +168,9 @@ def get_double_overlayed_view(
     fig_speed = px.line(
         features_df[:slider],
         x="Frame",
-        y=f"speed_Helmet_{helmet_number}-{marker} (m/s)",
+        y=f"{helmet_label} - {marker} speed (m/s)",
         color="Scenario",
-        title=f"Speed profile from Helmet {helmet_number} ",
+        title=f"Speed profile from {helmet_label}",
         color_discrete_sequence=["blue", "red"],
     )
     figs += [fig_speed]
