@@ -15,6 +15,15 @@ from magni_dash.config.constants import TRAJECTORY_SAMPLES_PATH
 SCENARIO1_PATH = os.path.join(TRAJECTORY_SAMPLES_PATH, "Scenario1")
 
 run_configs(scenario_id=1)
+with st.expander("See description"):
+    st.write(
+        """ Scenario 1 is designed as a baseline to capture “regular”
+            social behavior of walking people in a static environment. It
+            has two variations: 1A which only includes static obstacles,
+            and 1B which additionally includes floor markings and stop
+            signs in a one-way corridor.
+            """
+    )
 
 
 files = os.listdir(SCENARIO1_PATH)
