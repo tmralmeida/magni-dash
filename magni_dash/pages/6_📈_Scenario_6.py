@@ -54,7 +54,7 @@ if page == "Single file":
         marker = st.sidebar.radio("Marker to visualize", range(1, n_markers + 1))
 
         features_df = extract_features_sc6(
-            preprocessed_df.copy(), helmets_labels=helmet_label
+            preprocessed_df.copy(), magents_labels=helmet_label
         )
         figs = get_single_trajectory(
             helmet_label=helmet_label,
@@ -86,8 +86,8 @@ elif page == "6A vs 6B":
             df_a[df_a.columns[(df_a.columns.str.startswith("Helmet"))]].shape[1] / 2
         )
         marker = st.sidebar.radio("Marker to visualize", range(1, n_markers + 1))
-        features_df_a = extract_features_sc6(df_a.copy(), helmets_labels=helmet_label)
-        features_df_b = extract_features_sc6(df_b.copy(), helmets_labels=helmet_label)
+        features_df_a = extract_features_sc6(df_a.copy(), magents_labels=helmet_label)
+        features_df_b = extract_features_sc6(df_b.copy(), magents_labels=helmet_label)
         inputs_specfications = dict(
             SC6A=DoubleViewInputs(helmet_label, df_a, features_df_a),
             SC6B=DoubleViewInputs(helmet_label, df_b, features_df_b),

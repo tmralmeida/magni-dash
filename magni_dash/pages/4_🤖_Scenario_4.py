@@ -1,7 +1,71 @@
+import os
 import streamlit as st
 
-st.set_page_config(page_title="Scenario 4")
-st.markdown("# Scenario 4")
-st.sidebar.header("Scenario 4")
-st.write("""Scenario 4 description""")
-st.write("TODO")
+from magni_dash.st_components.common import run_configs
+from magni_dash.st_components.cache import (
+    load_df,
+    transform_df2plotly,
+    get_best_markers,
+    extract_features,
+)
+from magni_dash.utils.common import GroupsInfo
+from magni_dash.visualization.multi_trajectory import get_multi_element_trajectories
+from magni_dash.config.constants import TRAJECTORY_SAMPLES_PATH
+
+
+SCENARIO4_PATH = os.path.join(TRAJECTORY_SAMPLES_PATH, "Scenario4")
+
+
+run_configs(scenario_id=4)
+with st.expander("See description"):
+    st.write(
+        """
+            Scenario 4 ...
+            """
+    )
+
+files = os.listdir(SCENARIO4_PATH)
+files_target = list(filter(lambda x: x.endswith("pp.tsv"), files))
+
+input_file = st.sidebar.selectbox(
+    label="File", options=files_target, key="input_file", label_visibility="visible"
+)
+if st.session_state.input_file:
+    df_path = os.path.join(SCENARIO4_PATH, input_file)
+    preprocessed_df = load_df(
+        df_path=df_path,
+        header=11,
+        sep="\t",
+        index_col="Frame",
+    )
+    moving_agents = preprocessed_df.columns[
+        preprocessed_df.columns.str.startswith("Helmet")
+    ].tolist()
+    moving_agents_labels = set(map(lambda x: x.split(" - ")[0], moving_agents))
+    features_df = extract_features(
+        preprocessed_df.copy(),
+        magents_labels=list(moving_agents_labels),
+        darko_label="DARKO_Robot",
+    )
+    features_cat = preprocessed_df.join(features_df)
+    features_filtered = features_cat[
+        features_cat.columns[
+            (features_cat.columns.str.endswith("X"))
+            | (features_cat.columns.str.endswith("Y"))
+            | (features_cat.columns.str.endswith("speed (m/s)"))
+        ]
+    ]
+    darko_info = GroupsInfo(
+        element_id="DARKO_Robot", markers_pattern_re=r"DARKO_Robot - (\d).*", label_sep=" - "
+    )
+    helmets_info = GroupsInfo(
+        element_id="Helmet", markers_pattern_re=r"Helmet_(\d+ - \d).*", label_sep="_"
+    )
+    df_plot = transform_df2plotly(
+        input_df=features_filtered.copy(),
+        groups_info=[helmets_info, darko_info],
+    )
+    best_makers_df = get_best_markers(elements_cat_df=df_plot, ret_filtered_df=True)
+    figs = get_multi_element_trajectories(best_makers_df)
+    for fig in figs:
+        st.plotly_chart(fig, use_container_width=True)

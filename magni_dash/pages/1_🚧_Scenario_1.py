@@ -8,6 +8,7 @@ from magni_dash.st_components.cache import (
     get_best_markers,
     extract_features,
 )
+from magni_dash.utils.common import GroupsInfo
 from magni_dash.visualization.multi_trajectory import get_multi_element_trajectories
 from magni_dash.config.constants import TRAJECTORY_SAMPLES_PATH
 
@@ -32,6 +33,7 @@ files_target = list(filter(lambda x: x.endswith("pp.tsv"), files))
 input_file = st.sidebar.selectbox(
     label="File", options=files_target, key="input_file", label_visibility="visible"
 )
+
 if st.session_state.input_file:
     df_path = os.path.join(SCENARIO1_PATH, input_file)
     preprocessed_df = load_df(
@@ -45,7 +47,7 @@ if st.session_state.input_file:
     ].tolist()
     helmets_labels = set(map(lambda x: x.split(" - ")[0], helmets))
     features_df = extract_features(
-        preprocessed_df.copy(), helmets_labels=list(helmets_labels), darko_label=None
+        preprocessed_df.copy(), magents_labels=list(helmets_labels), darko_label=None
     )
     features_cat = preprocessed_df.join(features_df)
     features_filtered = features_cat[
@@ -56,12 +58,11 @@ if st.session_state.input_file:
         ]
     ]
 
-    eid, element_pat, sep = "Helmet", r"Helmet_(\d+ - \d).*", "_"
+    helmets_info = GroupsInfo(
+        element_id="Helmet", markers_pattern_re=r"Helmet_(\d+ - \d).*", label_sep="_"
+    )
     df_plot = transform_df2plotly(
-        input_df=features_filtered.copy(),
-        element_id=eid,
-        markers_pattern_re=element_pat,
-        sep=sep,
+        input_df=features_filtered.copy(), groups_info=helmets_info
     )
     best_makers_df = get_best_markers(elements_cat_df=df_plot, ret_filtered_df=True)
     figs = get_multi_element_trajectories(best_makers_df)

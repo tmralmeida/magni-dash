@@ -1,12 +1,12 @@
 import streamlit as st
 import pandas as pd
 import logging
-from typing import List, Union, Optional
+from typing import List, Union, Optional, NamedTuple
 
 from magni_dash.data_preprocessing.spatio_temporal_features import (
     SpatioTemporalFeatures,
 )
-from magni_dash.utils.common import get_mapping_cols
+from magni_dash.utils.common import get_mapping_cols, GroupsInfo
 from magni_dash.config.constants import TRAJECTORY_DATA_TYPE
 
 LOGGER = logging.getLogger(__name__)
@@ -61,7 +61,7 @@ def load_df(
 @st.cache_data
 def extract_features(
     out_df: pd.DataFrame,
-    helmets_labels: Union[str, List[str]],
+    magents_labels: Union[str, List[str]],
     darko_label: Optional[str],
 ) -> pd.DataFrame:
     """Extract features to be used in the profiles section such as speed
@@ -70,17 +70,19 @@ def extract_features(
     ----------
     input_df
         raw pandas DataFrame
-    helmet_number
-        number of helmet
+    magents_labels
+        moving agents labels
+    darko_label
+        darko robot label
 
     Returns
     -------
         pandas DataFrame with the respective features computed
     """
-    helmets_labels = (
-        [helmets_labels] if isinstance(helmets_labels, str) else helmets_labels
+    magents_labels = (
+        [magents_labels] if isinstance(magents_labels, str) else magents_labels
     )
-    elements_labels = helmets_labels + [darko_label] if darko_label else helmets_labels
+    elements_labels = magents_labels + [darko_label] if darko_label else magents_labels
 
     out_df = SpatioTemporalFeatures.get_speed(
         out_df,
@@ -94,9 +96,9 @@ def extract_features(
 
 @st.cache_resource
 def transform_df2plotly(
-    input_df: pd.DataFrame, element_id: str, markers_pattern_re: str, sep: str
+    input_df: pd.DataFrame, groups_info: Union[NamedTuple, List[NamedTuple]]
 ) -> pd.DataFrame:
-    """Transform a dataframe into the plotly format
+    """Transform a dataframe into the plotly best suited format
     |   Frame    |   X (m)  |   Y (m)  |   eid   |   mid   |
 
     being `eid` the element identifier (e.g. Helmet, DARKO, etc), and `mid` the marker identifier
@@ -116,23 +118,28 @@ def transform_df2plotly(
     -------
         Transformed pandas DataFrame
     """
-    elements_grouped = input_df.groupby(
-        input_df.columns.str.extract(markers_pattern_re, expand=False),
-        axis=1,
-    )
+    groups_info = [groups_info] if isinstance(groups_info, GroupsInfo) else groups_info
     groups = []
-    for group_name, group in elements_grouped:
-        _mapping_cols = get_mapping_cols(element_id, group_name, sep)
-        group = group.rename(_mapping_cols, axis=1)
-        eid = (
-            element_id + "_" + group_name.split(" - ")[0]
-            if element_id == "Helmet"
-            else element_id
+    for group_info in groups_info:
+        element_id = group_info.element_id
+        elements_grouped = input_df.groupby(
+            input_df.columns.str.extract(group_info.markers_pattern_re, expand=False),
+            axis=1,
         )
-        mid = group_name.split(" - ")[1] if element_id == "Helmet" else group_name
-        group["eid"] = eid
-        group["mid"] = mid
-        groups.append(group)
+        for group_name, group in elements_grouped:
+            _mapping_cols = get_mapping_cols(
+                element_id, group_name, group_info.label_sep
+            )
+            group = group.rename(_mapping_cols, axis=1)
+            eid = (
+                element_id + "_" + group_name.split(" - ")[0]
+                if element_id == "Helmet"
+                else element_id
+            )
+            mid = group_name.split(" - ")[1] if element_id == "Helmet" else group_name
+            group["eid"] = eid
+            group["mid"] = mid
+            groups.append(group)
     out_df = pd.concat(groups, axis=0)
     return out_df
 

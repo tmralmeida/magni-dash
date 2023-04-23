@@ -42,8 +42,8 @@ class SpatioTemporalFeatures:
         speed_dfs = []
         for element in element_name:
             element_pat = (
-                r"DARKO_Robot - (\d) "
-                if element == "Darko_Robot" or element == "DARKO"
+                rf"{element} - (\d) "
+                if element == "DARKO_Robot" or element == "DARKO"
                 else rf"{element} - (\d).*"
             )
             elements_disp = delta_df.groupby(
