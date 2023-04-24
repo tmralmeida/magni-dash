@@ -4,19 +4,18 @@ import streamlit as st
 
 
 def get_multi_element_trajectories(input_df: pd.DataFrame):
-    input_df = input_df.sort_index()
-    min_frame, max_frame = int(input_df.index.min()), int(input_df.index.max())
+    min_frame, max_frame = int(input_df.Frame.min()), int(input_df.Frame.max())
     slider = st.slider(
         label="Frame",
         min_value=min_frame,
         max_value=max_frame,
-        value=min_frame,
+        value=(min_frame, min_frame + 10),
         step=1,
         key="slider_scenario1",
     )
 
     fig = px.line(
-        input_df[input_df.index <= slider],
+        input_df[(input_df.Frame >= slider[0]) & (input_df.Frame <= slider[1])],
         x="X (m)",
         y="Y (m)",
         color="eid",
@@ -29,7 +28,7 @@ def get_multi_element_trajectories(input_df: pd.DataFrame):
     figs = [fig]
     if "speed (m/s)" in input_df.columns:
         speed_fig = px.line(
-            input_df[input_df.index <= slider],
+            input_df[(input_df.Frame >= slider[0]) & (input_df.Frame <= slider[1])],
             x="Frame",
             y="speed (m/s)",
             color="eid",

@@ -14,19 +14,19 @@ def get_single_trajectory(
     features_df: Optional[pd.DataFrame] = None,
 ):
     idx_scenario = input_file.find("SC6")
-    scenario_name = input_file[idx_scenario: idx_scenario + 4]
+    scenario_name = input_file[idx_scenario : idx_scenario + 4]
     min_frame, max_frame = int(processed_df.index.min()), int(processed_df.index.max())
     slider = tab_component.slider(
         label=f"Frame for {scenario_name}",
         min_value=min_frame,
         max_value=max_frame,
-        value=min_frame,
+        value=(min_frame, min_frame + 10),
         step=1,
         key=input_file,
     )
 
     fig = px.line(
-        processed_df[:slider],
+        processed_df[slider[0] : slider[1]],
         x=f"{helmet_label} - {marker} X",
         y=f"{helmet_label} - {marker} Y",
         title=f"Trajectory data from {helmet_label} in {scenario_name}",
@@ -47,7 +47,7 @@ def get_single_trajectory(
     figs = [fig]
     if features_df is not None:
         fig_speed = px.line(
-            features_df[:slider],
+            features_df[slider[0] : slider[1]],
             x="Frame",
             y=f"{helmet_label} - {marker} speed (m/s)",
             title=f"Speed profile from {helmet_label} in {scenario_name}",
@@ -76,7 +76,7 @@ def get_double_overlayed_view(
         label="Frame",
         min_value=slider_min_value,
         max_value=slider_max_value,
-        value=slider_min_value,
+        value=(slider_min_value, slider_min_value + 10),
         step=1,
         key="slider_overlayed",
     )
@@ -86,11 +86,11 @@ def get_double_overlayed_view(
             go.Scatter(
                 name="SC6A",
                 x=trajectory_dfa.loc[
-                    : min(slider, int(trajectory_dfa.index.max())),
+                    slider[0] : min(slider[1], int(trajectory_dfa.index.max())),
                     f"{helmet_label} - {marker} X",
                 ],
                 y=trajectory_dfa.loc[
-                    : min(slider, int(trajectory_dfa.index.max())),
+                    slider[0] : min(slider[1], int(trajectory_dfa.index.max())),
                     f"{helmet_label} - {marker} Y",
                 ],
                 mode="lines",
@@ -99,11 +99,11 @@ def get_double_overlayed_view(
             go.Scatter(
                 name="SC6B",
                 x=trajectory_dfb.loc[
-                    : min(slider, int(trajectory_dfb.index.max())),
+                    slider[0] : min(slider[1], int(trajectory_dfb.index.max())),
                     f"{helmet_label} - {marker} X",
                 ],
                 y=trajectory_dfb.loc[
-                    : min(slider, int(trajectory_dfb.index.max())),
+                    slider[0] : min(slider[1], int(trajectory_dfb.index.max())),
                     f"{helmet_label} - {marker} Y",
                 ],
                 mode="lines",
@@ -166,7 +166,7 @@ def get_double_overlayed_view(
     features_df = pd.concat([features_df_a, features_df_b], axis=0)
     features_df = features_df.sort_index()
     fig_speed = px.line(
-        features_df[:slider],
+        features_df[slider[0] : slider[1]],
         x="Frame",
         y=f"{helmet_label} - {marker} speed (m/s)",
         color="Scenario",
