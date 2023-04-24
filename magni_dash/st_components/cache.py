@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import logging
-from typing import List, Union, Optional, NamedTuple
+from typing import List, Union, Optional, NamedTuple, Dict
 
 from magni_dash.data_preprocessing.spatio_temporal_features import (
     SpatioTemporalFeatures,
@@ -41,21 +41,29 @@ def load_df(
     )
     if TRAJECTORY_DATA_TYPE == "2D":
         raw_df = raw_df[raw_df.columns[~raw_df.columns.str.endswith(height_suffix)]]
+
     raw_df = raw_df.dropna(axis=1, how="all")
-    raw_df = raw_df.interpolate()
-    raw_df[
-        raw_df.columns[
-            (raw_df.columns.str.endswith("X"))
-            | ((raw_df.columns.str.endswith("Y")))
-            | ((raw_df.columns.str.endswith("Z")))
-        ]
-    ] /= 1000
     raw_df = raw_df.loc[
         :,
         (~raw_df.columns.str.contains("^Unnamed"))
         & (~raw_df.columns.str.contains("Type")),
     ]
     return raw_df
+
+
+@st.cache_data
+def preprocess_df(raw_df: pd.DataFrame) -> pd.DataFrame:
+    """interpolation and divide by 1000 to get measurements in meters"""
+    preprocessed_df = raw_df.copy()
+    preprocessed_df = preprocessed_df.interpolate()
+    preprocessed_df[
+        preprocessed_df.columns[
+            (preprocessed_df.columns.str.endswith("X"))
+            | ((preprocessed_df.columns.str.endswith("Y")))
+            | ((preprocessed_df.columns.str.endswith("Z")))
+        ]
+    ] /= 1000
+    return preprocessed_df
 
 
 @st.cache_data
@@ -145,27 +153,33 @@ def transform_df2plotly(
 
 
 @st.cache_resource
-def get_best_markers(elements_cat_df: pd.DataFrame, ret_filtered_df: bool):
+def get_best_markers(input_df: pd.DataFrame):
     """Get markers with lowest amount of NaN values"""
+    x_coordinate = input_df[input_df.columns[input_df.columns.str.endswith("X")]]
+    x_cols = x_coordinate.columns
 
-    instances = elements_cat_df.eid.unique()
+    instances = set(x_coordinate.columns.str.split(" - ").str[0])
     nan_counter_by_marker = {}
     for instance_id in instances:
         nan_counter_by_marker[instance_id] = {}
-        markers = elements_cat_df[elements_cat_df.eid == instance_id].mid.unique()
+        markers = (
+            x_coordinate[x_cols[x_cols.str.startswith(f"{instance_id} ")]]
+            .columns.str.split(regex=r" (/d) ")
+            .str[2]
+        )
         for marker_id in markers:
             n_nans = (
-                elements_cat_df[
-                    (elements_cat_df.eid == instance_id)
-                    & (elements_cat_df.mid == marker_id)
-                ]["X (m)"]
+                x_coordinate[f"{instance_id} - {marker_id} X"]
                 .isna()
                 .sum()
             )
             nan_counter_by_marker[instance_id][marker_id] = n_nans
     LOGGER.info(nan_counter_by_marker)
-    if not ret_filtered_df:
-        return nan_counter_by_marker
+    return nan_counter_by_marker
+
+
+@st.cache_resource
+def filter_best_markers(elements_cat_df: pd.DataFrame, nan_counter_by_marker: Dict):
     elements_filtered_by_best_marker = []
     for instance_id, nans_counter in nan_counter_by_marker.items():
         best_marker_id = min(
