@@ -4,9 +4,11 @@ import streamlit as st
 from magni_dash.st_components.common import run_configs
 from magni_dash.st_components.cache import (
     load_df,
+    preprocess_df,
     transform_df2plotly,
     get_best_markers,
     extract_features,
+    filter_best_markers,
 )
 from magni_dash.utils.common import GroupsInfo
 from magni_dash.visualization.multi_trajectory import get_multi_element_trajectories
@@ -36,12 +38,14 @@ input_file = st.sidebar.selectbox(
 
 if st.session_state.input_file:
     df_path = os.path.join(SCENARIO1_PATH, input_file)
-    preprocessed_df = load_df(
+    raw_df = load_df(
         df_path=df_path,
         header=11,
         sep="\t",
         index_col="Frame",
     )
+    best_markers_counter = get_best_markers(input_df=raw_df)
+    preprocessed_df = preprocess_df(raw_df.copy())
     helmets = preprocessed_df.columns[
         preprocessed_df.columns.str.startswith("Helmet")
     ].tolist()
@@ -64,7 +68,9 @@ if st.session_state.input_file:
     df_plot = transform_df2plotly(
         input_df=features_filtered.copy(), groups_info=helmets_info
     )
-    best_makers_df = get_best_markers(elements_cat_df=df_plot, ret_filtered_df=True)
+    best_makers_df = filter_best_markers(
+        elements_cat_df=df_plot.copy(), nan_counter_by_marker=best_markers_counter
+    )
     figs = get_multi_element_trajectories(best_makers_df)
     for fig in figs:
         st.plotly_chart(fig, use_container_width=True)

@@ -3,7 +3,7 @@ import re
 import streamlit as st
 from functools import partial
 from collections import namedtuple
-from magni_dash.st_components.cache import load_df, extract_features
+from magni_dash.st_components.cache import load_df, extract_features, preprocess_df
 from magni_dash.st_components.common import run_configs
 from magni_dash.utils.scenario6 import get_files_name_mapping
 from magni_dash.visualization.single_trajectory import (
@@ -40,9 +40,10 @@ if page == "Single file":
     helmet_label = "Helmet_" + re_pattern_helmet_number.findall(input_file)[0][1:]
     if st.session_state.input_file:
         df_path = os.path.join(SCENARIO6_PATH, input_file)
-        preprocessed_df = load_data(
+        raw_df = load_data(
             df_path=df_path,
         )
+        preprocessed_df = preprocess_df(raw_df.copy())
         n_markers = int(
             preprocessed_df[
                 preprocessed_df.columns[
