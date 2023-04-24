@@ -1,4 +1,4 @@
-name: check-dash
+name: magni-dash
 channels:
   - robostack
   - conda-forge
