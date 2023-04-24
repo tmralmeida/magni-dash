@@ -22,7 +22,7 @@ class SpatioTemporalFeatures:
         out_df = input_df.copy()
         out_df[f"{input_df.name}_displacement"] = np.sqrt(
             np.square(out_df).sum(axis=1)
-        )  # in mm
+        )
         return out_df
 
     @staticmethod
@@ -41,11 +41,7 @@ class SpatioTemporalFeatures:
         delta_df = SpatioTemporalFeatures.get_delta_columns(out_df)
         speed_dfs = []
         for element in element_name:
-            element_pat = (
-                rf"{element} - (\d) "
-                if element == "DARKO_Robot" or element == "DARKO"
-                else rf"{element} - (\d).*"
-            )
+            element_pat = rf"{element} - (\d).*"
             elements_disp = delta_df.groupby(
                 delta_df.columns.str.extract(element_pat, expand=False),
                 axis=1,
