@@ -94,7 +94,7 @@ def get_double_overlayed_view(
                     f"{helmet_label} - {marker} Y",
                 ],
                 mode="lines",
-                marker=dict(color="blue"),
+                marker=dict(color="red"),
             ),
             go.Scatter(
                 name="SC6B",
@@ -107,7 +107,7 @@ def get_double_overlayed_view(
                     f"{helmet_label} - {marker} Y",
                 ],
                 mode="lines",
-                marker=dict(color="red"),
+                marker=dict(color="blue"),
             ),
         ]
     )
