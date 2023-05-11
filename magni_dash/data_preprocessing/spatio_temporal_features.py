@@ -20,9 +20,7 @@ class SpatioTemporalFeatures:
     @staticmethod
     def get_displacement(input_df: pd.DataFrame):
         out_df = input_df.copy()
-        out_df[f"{input_df.name}_displacement"] = np.sqrt(
-            np.square(out_df).sum(axis=1)
-        )
+        out_df[f"{input_df.name}_displacement"] = np.sqrt(np.square(out_df).sum(axis=1))
         return out_df
 
     @staticmethod
