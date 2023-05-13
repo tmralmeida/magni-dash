@@ -22,7 +22,11 @@ run_configs(scenario_id=5)
 with st.expander("See description"):
     st.write(
         """
-            Scenario 5 ...
+            In Scenario 5, one participant was performing as a worker in a factory carrying
+            objects between two points in the environment. The robot (remotely controlled by one of
+            us) proactively offers help to the participant. If the participant accepted, the robot
+            would ask to place the objects on top of it. Otherwise, the participant was asked to
+            continue with the task.
             """
     )
 

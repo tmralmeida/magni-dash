@@ -22,7 +22,19 @@ run_configs(scenario_id=4)
 with st.expander("See description"):
     st.write(
         """
-            Scenario 4 ...
+            In Scenario 4 participants navigated freely alongside the robot in the same room as
+            the other scenarios, but with a more open layout and seven goal points.
+            Here, we explored two interaction styles (multimodal and verbal-only) of an ARMoD
+            giving simple instructions. In the multimodal style, the ARMoD greeted the participant
+            while establishing eye contact, communicated attention intent, and used head and
+            pointing gestures to instruct the participant to go to the next goal point and draw a
+            card. At the goal point, the ARMoD again used head and pointing gestures to instruct
+            the participant to go to the goal on the card. In the verbal-only style, the ARMoD
+            only greeted the participant and provided final instructions at the goal point,
+            without eye contact, head-eye gaze or pointing gestures. Depending on the interaction
+            style and the distance between goals, interactions lasted around 30-40 seconds, with a
+            median duration of 37 seconds for the multimodal style and 32 seconds for the
+            verbal-only style.
             """
     )
 

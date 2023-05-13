@@ -1,6 +1,7 @@
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+import plotly.graph_objects as go
 
 
 def get_multi_element_trajectories(input_df: pd.DataFrame):
@@ -11,7 +12,7 @@ def get_multi_element_trajectories(input_df: pd.DataFrame):
         max_value=max_frame,
         value=(min_frame, min_frame + 10),
         step=1,
-        key="slider_scenario1",
+        key="slider_scenario",
     )
 
     fig = px.line(
@@ -35,3 +36,135 @@ def get_multi_element_trajectories(input_df: pd.DataFrame):
         )
         figs += [speed_fig]
     return figs
+
+
+def get_eyt_trajectories_visualization(
+    trajectories_df: pd.DataFrame, eyt_df: pd.DataFrame, centroids_df: pd.DataFrame
+):
+    eyt_df["Frame"] = eyt_df.index
+    centroids_df["Frame"] = centroids_df.index
+    ORIGIN = (0, 0, 0)
+    X_COORD = (2.5, 0, 0)
+    Y_COORD = (0, 1, 0)
+    Z_COORD = (0, 0, 0.5)
+    min_frame, max_frame = int(trajectories_df.Frame.min()), int(
+        trajectories_df.Frame.max()
+    )
+    slider = st.slider(
+        label="Frame",
+        min_value=min_frame,
+        max_value=max_frame,
+        value=(min_frame, min_frame + 10),
+        step=1,
+        key="slider_eyt",
+    )
+    target_trajectories = trajectories_df[
+        (trajectories_df.Frame >= slider[0]) & (trajectories_df.Frame <= slider[1])
+    ]
+    target_centroids = centroids_df[
+        (centroids_df.Frame >= slider[0]) & (centroids_df.Frame <= slider[1])
+    ]
+    target_eyt = eyt_df[(eyt_df.Frame >= slider[0]) & (eyt_df.Frame <= slider[1])]
+    fig = go.Figure()
+    for eid in eyt_df.eid.unique():
+        trajectories = target_trajectories[target_trajectories["eid"] == eid]
+        centroids_data = target_centroids[target_centroids["eid"] == eid]
+        eyt_data = target_eyt[target_eyt["eid"] == eid]
+        trace_trajs = go.Scatter3d(
+            x=trajectories["X (m)"],
+            y=trajectories["Y (m)"],
+            z=trajectories["Z (m)"],
+            mode="lines",
+            name=eid,
+        )
+        trace_centroids = go.Scatter3d(
+            x=centroids_data[centroids_data.Frame == slider[1]]["Centroid X (m)"]
+            / 1000,
+            y=centroids_data[centroids_data.Frame == slider[1]]["Centroid Y (m)"]
+            / 1000,
+            z=centroids_data[centroids_data.Frame == slider[1]]["Centroid Z (m)"]
+            / 1000,
+            mode="markers",
+            name=f"Helmet_{eid} RF",
+        )
+        trace_eyt = go.Scatter3d(
+            x=eyt_data["TB_G3D X (m)"],
+            y=eyt_data["TB_G3D Y (m)"],
+            z=eyt_data["TB_G3D Z (m)"],
+            mode="markers",
+            name=f"Gaze point from Helmet_{eid}",
+        )
+        fig.add_trace(trace_trajs)
+        fig.add_trace(trace_centroids)
+        fig.add_trace(trace_eyt)
+
+    fig.add_trace(
+        go.Scatter3d(
+            x=[ORIGIN[0], X_COORD[0], None],
+            y=[ORIGIN[1], X_COORD[1], None],
+            z=[ORIGIN[2], X_COORD[2], None],
+            mode="lines",
+            line=dict(color="red", width=5),
+            showlegend=False,
+        )
+    )
+    fig.add_trace(
+        go.Scatter3d(
+            x=[ORIGIN[0], Y_COORD[0], None],
+            y=[ORIGIN[1], Y_COORD[1], None],
+            z=[ORIGIN[2], Y_COORD[2], None],
+            mode="lines",
+            line=dict(color="green", width=5),
+            showlegend=False,
+        )
+    )
+    fig.add_trace(
+        go.Scatter3d(
+            x=[ORIGIN[0], Z_COORD[0], None],
+            y=[ORIGIN[1], Z_COORD[1], None],
+            z=[ORIGIN[2], Z_COORD[2], None],
+            mode="lines",
+            line=dict(color="blue", width=5),
+            showlegend=False,
+        )
+    )
+
+    fig.add_cone(
+        x=[X_COORD[0]],
+        y=[0],
+        z=[0],
+        u=[X_COORD[0]],
+        v=[0],
+        w=[0],
+        colorscale=[[0, "red"], [1, "red"]],
+        showscale=False,
+    )
+
+    fig.add_cone(
+        x=[0],
+        y=[Y_COORD[1]],
+        z=[0],
+        u=[0],
+        v=[Y_COORD[1]],
+        w=[0],
+        colorscale=[[0, "green"], [1, "green"]],
+        showscale=False,
+    )
+
+    fig.add_cone(
+        x=[0],
+        y=[0],
+        z=[Z_COORD[2]],
+        u=[0],
+        v=[0],
+        w=[Z_COORD[2]],
+        colorscale=[[0, "blue"], [1, "blue"]],
+        showscale=False,
+    )
+    fig.update_layout(
+        xaxis=dict(showgrid=False),
+        yaxis=dict(showgrid=False),
+        margin=dict(l=0, r=0, t=20, b=20),
+        scene=dict(xaxis_title="X (m)", yaxis_title="Y (m)", zaxis_title="Z (m)"),
+    )
+    return fig
