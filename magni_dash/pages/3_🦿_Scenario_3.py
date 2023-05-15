@@ -138,7 +138,6 @@ if st.session_state.input_file:
         for fig in figs:
             st.plotly_chart(fig, use_container_width=True)
     with tab_eyt_sync3d:
-        st.write("wip")
         fig = get_eyt_trajectories_visualization(
             best_makers_df, transformed_eyt, transformed_centroids
         )
