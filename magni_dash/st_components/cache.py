@@ -109,11 +109,14 @@ def extract_features(
 
 
 @st.cache_resource
-def transform_df2plotly(input_df: pd.DataFrame, groups_info) -> pd.DataFrame:
+def transform_df2plotly(
+    input_df: pd.DataFrame, groups_info
+) -> pd.DataFrame:
     """Transform a dataframe into the plotly best suited format
-    |   Frame    |   X (m)  |   Y (m)  |   eid   |   mid   |
+    |   Frame    |   axis i (um)  |   axis i+1 (um)  |   axis i+2(um)   |   eid   | optional [mid]
 
     being `eid` the element identifier (e.g. Helmet, DARKO, etc), and `mid` the marker identifier
+    and axis can be X, Y, Z (being um meters)
 
     Parameters
     ----------
@@ -165,9 +168,7 @@ def transform_df2plotly(input_df: pd.DataFrame, groups_info) -> pd.DataFrame:
                     if element_id == "Helmet"
                     else element_id
                 )
-                mid = (
-                    group_name.split(" - ")[1] if element_id == "Helmet" else group_name
-                )
+                mid = group_name.split(" - ")[1] if element_id == "Helmet" else group_name
                 group["mid"] = mid
             group["eid"] = eid
             groups.append(group)

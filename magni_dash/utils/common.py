@@ -23,8 +23,11 @@ def get_mapping_cols_tobii(element: str, element_number: str, sep: str) -> Dict:
 
 
 def get_mapping_cols_centroids(element: str, element_number: str, sep: str) -> Dict:
-    return {
+    centroids = {
         element + sep + element_number + " " + "Centroid_X": "Centroid X (m)",
         element + sep + element_number + " " + "Centroid_Y": "Centroid Y (m)",
         element + sep + element_number + " " + "Centroid_Z": "Centroid Z (m)",
     }
+    rotations = {element + sep + element_number + " " + f"R{i}": f"R{i}" for i in range(9)}
+    centroids.update(rotations)
+    return centroids

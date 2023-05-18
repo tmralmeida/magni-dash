@@ -79,13 +79,17 @@ if st.session_state.input_file:
         darko_label="DARKO",
     )
     features_cat = preprocessed_df.join(features_df)
+    rotations_cols = features_cat[
+        features_cat.columns[features_cat.columns.str.contains(r"R(\d)")]
+    ].columns.tolist()
     features_filtered = features_cat[
         features_cat.columns[
             (features_cat.columns.str.endswith("X"))
             | (features_cat.columns.str.endswith("Y"))
             | (features_cat.columns.str.endswith("Z"))
             | (features_cat.columns.str.endswith("speed (m/s)"))
-        ]
+        ].tolist()
+        + rotations_cols
     ]
     # features_filtered = features_cat[
     #     features_cat.columns[
@@ -115,6 +119,11 @@ if st.session_state.input_file:
         markers_pattern_re=r"Helmet_(\d+) Centroid_.*",
         label_sep="_",
     )
+    rotations_info = GroupsInfo(
+        element_id="Helmet",
+        markers_pattern_re=r"Helmet_(\d+) R.*",
+        label_sep="_",
+    )
     trajectories_df_plot = transform_df2plotly(
         input_df=features_filtered.copy(),
         groups_info=[helmets_info, darko_info, lo_info],
@@ -127,8 +136,14 @@ if st.session_state.input_file:
         input_df=features_filtered.copy(),
         groups_info=[centroids_info],
     )
+    transformed_rotations = transform_df2plotly(
+        input_df=features_filtered.copy(),
+        groups_info=[rotations_info],
+    )
     transformed_eyt = transformed_tobii.sort_index()
-    transformed_centroids = transformed_centroids.sort_index()
+    transformed_centroids = transformed_centroids.sort_index().drop("eid", axis=1)
+    transformed_rotations = transformed_rotations.sort_index()
+    cent_rot = pd.concat([transformed_centroids, transformed_rotations], axis=1)
     best_makers_df = filter_best_markers(
         elements_cat_df=trajectories_df_plot.copy(),
         nan_counter_by_marker=best_markers_counter,
@@ -139,6 +154,6 @@ if st.session_state.input_file:
             st.plotly_chart(fig, use_container_width=True)
     with tab_eyt_sync3d:
         fig = get_eyt_trajectories_visualization(
-            best_makers_df, transformed_eyt, transformed_centroids
+            best_makers_df, transformed_eyt, cent_rot
         )
         st.plotly_chart(fig, use_container_width=True)
