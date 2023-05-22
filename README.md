@@ -7,7 +7,7 @@ Dashboard for Magni dataset.
 Install [miniconda](http://docs.conda.io/en/latest/miniconda.html). Then, you can install all packages required by running:
 
 ```
-conda env create -f environment.yml
+conda env create -f ex_environment.yml
 ```
 
 Then, our own package:
