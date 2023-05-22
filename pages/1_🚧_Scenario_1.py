@@ -1,8 +1,8 @@
 import os
 import streamlit as st
 
-from magni_dash.st_components.common import run_configs
-from magni_dash.st_components.cache import (
+from st_components.common import run_configs
+from st_components.cache import (
     load_df,
     preprocess_df,
     transform_df2plotly,
@@ -10,34 +10,34 @@ from magni_dash.st_components.cache import (
     extract_features,
     filter_best_markers,
 )
-from magni_dash.utils.common import GroupsInfo
-from magni_dash.visualization.multi_trajectory import get_multi_element_trajectories
-from magni_dash.config.constants import TRAJECTORY_SAMPLES_PATH
+from utils.common import GroupsInfo
+from visualization.multi_trajectory import get_multi_element_trajectories
+from config.constants import TRAJECTORY_SAMPLES_PATH
 
 
-SCENARIO5_PATH = os.path.join(TRAJECTORY_SAMPLES_PATH, "Scenario5")
+SCENARIO1_PATH = os.path.join(TRAJECTORY_SAMPLES_PATH, "Scenario1")
 
-
-run_configs(scenario_id=5)
+run_configs(scenario_id=1)
 with st.expander("See description"):
     st.write(
-        """
-            In Scenario 5, one participant was performing as a worker in a factory carrying
-            objects between two points in the environment. The robot (remotely controlled by one of
-            us) proactively offers help to the participant. If the participant accepted, the robot
-            would ask to place the objects on top of it. Otherwise, the participant was asked to
-            continue with the task.
+        """ Scenario 1 is designed as a baseline to capture “regular”
+            social behavior of walking people in a static environment. It
+            has two variations: 1A which only includes static obstacles,
+            and 1B which additionally includes floor markings and stop
+            signs in a one-way corridor.
             """
     )
 
-files = os.listdir(SCENARIO5_PATH)
+
+files = os.listdir(SCENARIO1_PATH)
 files_target = list(filter(lambda x: x.endswith("pp.tsv"), files))
 
 input_file = st.sidebar.selectbox(
     label="File", options=files_target, key="input_file", label_visibility="visible"
 )
+
 if st.session_state.input_file:
-    df_path = os.path.join(SCENARIO5_PATH, input_file)
+    df_path = os.path.join(SCENARIO1_PATH, input_file)
     raw_df = load_df(
         df_path=df_path,
         header=11,
@@ -46,14 +46,12 @@ if st.session_state.input_file:
     )
     best_markers_counter = get_best_markers(input_df=raw_df)
     preprocessed_df = preprocess_df(raw_df.copy())
-    moving_agents = preprocessed_df.columns[
+    helmets = preprocessed_df.columns[
         preprocessed_df.columns.str.startswith("Helmet")
     ].tolist()
-    moving_agents_labels = set(map(lambda x: x.split(" - ")[0], moving_agents))
+    helmets_labels = set(map(lambda x: x.split(" - ")[0], helmets))
     features_df = extract_features(
-        preprocessed_df.copy(),
-        magents_labels=list(moving_agents_labels),
-        darko_label="DARKO_Robot",
+        preprocessed_df.copy(), magents_labels=list(helmets_labels), darko_label=None
     )
     features_cat = preprocessed_df.join(features_df)
     features_filtered = features_cat[
@@ -63,17 +61,12 @@ if st.session_state.input_file:
             | (features_cat.columns.str.endswith("speed (m/s)"))
         ]
     ]
-    darko_info = GroupsInfo(
-        element_id="DARKO_Robot",
-        markers_pattern_re=r"DARKO_Robot - (\d).*",
-        label_sep=" - ",
-    )
+
     helmets_info = GroupsInfo(
         element_id="Helmet", markers_pattern_re=r"Helmet_(\d+ - \d).*", label_sep="_"
     )
     df_plot = transform_df2plotly(
-        input_df=features_filtered.copy(),
-        groups_info=[helmets_info, darko_info],
+        input_df=features_filtered.copy(), groups_info=helmets_info
     )
     best_makers_df = filter_best_markers(
         elements_cat_df=df_plot.copy(), nan_counter_by_marker=best_markers_counter

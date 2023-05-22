@@ -10,11 +10,6 @@ Install [miniconda](http://docs.conda.io/en/latest/miniconda.html). Then, you ca
 conda env create -f ex_environment.yml
 ```
 
-Then, our own package:
-```
-pip install .
-```
-
 Set the [path](https://github.com/tmralmeida/magni-dash/blob/main/magni_dash/config/constants.py) to a directory with the following structure:
 
 ------------

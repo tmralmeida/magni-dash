@@ -2,8 +2,8 @@ import os
 import streamlit as st
 import pandas as pd
 
-from magni_dash.st_components.common import run_configs
-from magni_dash.st_components.cache import (
+from st_components.common import run_configs
+from st_components.cache import (
     # load_df,
     preprocess_df,
     transform_df2plotly,
@@ -11,12 +11,12 @@ from magni_dash.st_components.cache import (
     extract_features,
     filter_best_markers,
 )
-from magni_dash.utils.common import GroupsInfo
-from magni_dash.visualization.multi_trajectory import (
+from utils.common import GroupsInfo
+from visualization.multi_trajectory import (
     get_multi_element_trajectories,
     get_eyt_trajectories_visualization,
 )
-from magni_dash.config.constants import TRAJECTORY_SAMPLES_PATH
+from config.constants import TRAJECTORY_SAMPLES_PATH
 
 
 SCENARIO3_PATH = os.path.join(TRAJECTORY_SAMPLES_PATH, "Scenario3")

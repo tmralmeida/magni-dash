@@ -3,16 +3,16 @@ import pandas as pd
 import logging
 from typing import List, Union, Optional, Dict
 
-from magni_dash.data_preprocessing.spatio_temporal_features import (
+from data_preprocessing.spatio_temporal_features import (
     SpatioTemporalFeatures,
 )
-from magni_dash.utils.common import (
+from utils.common import (
     get_mapping_cols,
     get_mapping_cols_tobii,
     get_mapping_cols_centroids,
     GroupsInfo,
 )
-from magni_dash.config.constants import TRAJECTORY_DATA_TYPE
+from config.constants import TRAJECTORY_DATA_TYPE
 
 LOGGER = logging.getLogger(__name__)
 

@@ -3,14 +3,14 @@ import re
 import streamlit as st
 from functools import partial
 from collections import namedtuple
-from magni_dash.st_components.cache import load_df, extract_features, preprocess_df
-from magni_dash.st_components.common import run_configs
-from magni_dash.utils.scenario6 import get_files_name_mapping
-from magni_dash.visualization.single_trajectory import (
+from st_components.cache import load_df, extract_features, preprocess_df
+from st_components.common import run_configs
+from utils.scenario6 import get_files_name_mapping
+from visualization.single_trajectory import (
     get_single_trajectory,
     get_double_overlayed_view,
 )
-from magni_dash.config.constants import TRAJECTORY_SAMPLES_PATH
+from config.constants import TRAJECTORY_SAMPLES_PATH
 
 
 SCENARIO6_PATH = os.path.join(TRAJECTORY_SAMPLES_PATH, "Scenario6")

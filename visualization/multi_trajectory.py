@@ -145,27 +145,18 @@ def get_eyt_trajectories_visualization(
         x_rep = np.array([[1.0, 0, 0]])
         y_rep = np.array([[0, 1.0, 0]])
         z_rep = np.array([[0, 0, 1.0]])
-        # print("ROTATIONS", rotations_reshaped)
-        # rotations_reshaped = np.eye(3)
         x_rotated = np.matmul(x_rep, rotations_reshaped).squeeze()
         y_rotated = np.matmul(y_rep, rotations_reshaped).squeeze()
         z_rotated = np.matmul(z_rep, rotations_reshaped).squeeze()
-        # print("x_rot", x_rotated)
-        # print("y_rot", y_rotated)
-        # print("z_rot", z_rotated)
         initial_pt = (
             centroids[centroids.Frame == slider[1]][
                 ["Centroid X (m)", "Centroid Y (m)", "Centroid Z (m)"]
             ].values
             / 1000
         ).squeeze()
-        # print("initial", initial_pt)
         x_trans = x_rotated + initial_pt
         y_trans = y_rotated + initial_pt
         z_trans = z_rotated + initial_pt
-        # print("x_trans", x_trans)
-        # print("y_trans", y_trans)
-        # print("z_trans", z_trans)
 
         eyt_data = target_eyt[target_eyt["eid"] == eid]
         trace_trajs = go.Scatter3d(
@@ -201,7 +192,6 @@ def get_eyt_trajectories_visualization(
             showlegend=False,
         )
         gaze_x, gaze_y, gaze_z = eyt_data[["TB_G3D X (m)", "TB_G3D Y (m)", "TB_G3D Z (m)"]].iloc[-1]
-        print(gaze_x, gaze_y, gaze_z)
         trace_gaze = go.Scatter3d(
             x=[initial_pt[0], gaze_x, None],
             y=[initial_pt[1], gaze_y, None],
