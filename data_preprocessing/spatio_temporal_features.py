@@ -3,6 +3,8 @@ import logging
 import pandas as pd
 import numpy as np
 
+from config.constants import MAX_SPEED
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -62,6 +64,9 @@ class SpatioTemporalFeatures:
                 elements_disp[disp_cols]
                 .div(elements_disp["Time_delta"].values, axis=0)
                 .values
+            )
+            elements_disp.loc[:, speed_cols] = elements_disp[speed_cols].clip(
+                upper=MAX_SPEED
             )
             LOGGER.info(f"{speed_cols} created successfully!")  # noqa: W1203
             speed_dfs.append(elements_disp)

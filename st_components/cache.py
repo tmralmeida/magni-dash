@@ -58,16 +58,13 @@ def load_df(
 
 @st.cache_data
 def preprocess_df(raw_df: pd.DataFrame) -> pd.DataFrame:
-    """interpolation and divide by 1000 to get measurements in meters"""
+    """divide by 1000 to get measurements in meters"""
     preprocessed_df = raw_df.copy()
     trajectories_condition = preprocessed_df.columns[
         (preprocessed_df.columns.str.endswith(" X"))
         | ((preprocessed_df.columns.str.endswith(" Y")))
         | ((preprocessed_df.columns.str.endswith(" Z")))
     ]
-    preprocessed_df[trajectories_condition] = preprocessed_df[
-        trajectories_condition
-    ].interpolate()
     preprocessed_df[trajectories_condition] /= 1000
     return preprocessed_df
 
