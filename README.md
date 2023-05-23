@@ -2,7 +2,7 @@
 # magni-dash
 Dashboard for Magni dataset.
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://https://magni-dash.streamlit.app)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://magni-dash.streamlit.app)
 
 - Web app: <https://magni-dash.streamlit.app>
 - Source code: <https://github.com/tmralmeida/magni-dash>
