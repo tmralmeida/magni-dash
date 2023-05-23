@@ -198,6 +198,7 @@ def get_best_markers(input_df: pd.DataFrame):
 
 @st.cache_resource
 def filter_best_markers(elements_cat_df: pd.DataFrame, nan_counter_by_marker: Dict):
+    """Return data from the best marker based on the min number of nans"""
     elements_filtered_by_best_marker = []
     for instance_id, nans_counter in nan_counter_by_marker.items():
         best_marker_id = min(
