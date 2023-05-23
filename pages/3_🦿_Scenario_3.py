@@ -4,7 +4,6 @@ import pandas as pd
 
 from st_components.common import run_configs
 from st_components.cache import (
-    # load_df,
     preprocess_df,
     transform_df2plotly,
     get_best_markers,
@@ -35,7 +34,7 @@ with st.expander("See description"):
     )
 
 files = os.listdir(SCENARIO3_PATH)
-files_target = list(filter(lambda x: x.endswith("merged.csv"), files))
+files_target = list(filter(lambda x: x.endswith(".csv"), files))
 
 input_file = st.sidebar.selectbox(
     label="File", options=files_target, key="input_file", label_visibility="visible"
@@ -44,12 +43,6 @@ if st.session_state.input_file:
     tab_trajectories, tab_eyt_sync3d = st.tabs(["2D Trajectory data", "EYT data"])
 
     df_path = os.path.join(SCENARIO3_PATH, input_file)
-    # raw_df = load_df(
-    #     df_path=df_path,
-    #     header=11,
-    #     sep="\t",
-    #     index_col="Frame",
-    # )
     raw_df = pd.read_csv(df_path, index_col="Frame")
     best_markers_counter = get_best_markers(input_df=raw_df)
     preprocessed_df = preprocess_df(raw_df.copy())
@@ -57,17 +50,11 @@ if st.session_state.input_file:
         (preprocessed_df.columns.str.startswith("Helmet"))
         | (preprocessed_df.columns.str.startswith("LO1"))
     ].tolist()
-    # moving_agents_labels = set(map(lambda x: x.split(" - ")[0], moving_agents))
     moving_agents_labels = set(map(lambda x: x.split(" - ")[0], moving_agents))
     moving_agents_labels = filter(
         lambda x: len(x.split(" ")) == 1, moving_agents_labels
     )
 
-    # features_df = extract_features(
-    #     preprocessed_df.copy(),
-    #     magents_labels=list(moving_agents_labels),
-    #     darko_label="DARKO",
-    # )
     moving_agents_cols = preprocessed_df.columns[
         (preprocessed_df.columns.str.endswith(" X"))
         | ((preprocessed_df.columns.str.endswith(" Y")))
@@ -91,13 +78,6 @@ if st.session_state.input_file:
         ].tolist()
         + rotations_cols
     ]
-    # features_filtered = features_cat[
-    #     features_cat.columns[
-    #         (features_cat.columns.str.endswith("X"))
-    #         | (features_cat.columns.str.endswith("Y"))
-    #         | (features_cat.columns.str.endswith("speed (m/s)"))
-    #     ]
-    # ]
     lo_info = GroupsInfo(
         element_id="LO1", markers_pattern_re=r"LO1 - (\d).*", label_sep=" - "
     )

@@ -191,7 +191,9 @@ def get_eyt_trajectories_visualization(
             line=dict(color="blue", width=5),
             showlegend=False,
         )
-        gaze_x, gaze_y, gaze_z = eyt_data[["TB_G3D X (m)", "TB_G3D Y (m)", "TB_G3D Z (m)"]].iloc[-1]
+        gaze_x, gaze_y, gaze_z = (
+            eyt_data[["TB_G3D X (m)", "TB_G3D Y (m)", "TB_G3D Z (m)"]].iloc[-1] / 1000
+        )
         trace_gaze = go.Scatter3d(
             x=[initial_pt[0], gaze_x, None],
             y=[initial_pt[1], gaze_y, None],
