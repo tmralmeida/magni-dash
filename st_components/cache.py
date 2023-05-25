@@ -17,7 +17,7 @@ from config.constants import TRAJECTORY_DATA_TYPE
 LOGGER = logging.getLogger(__name__)
 
 
-@st.cache_data
+@st.cache_data(ttl=60 * 4, max_entries=5)
 def load_df(
     df_path: str, sep: str, header: int, index_col: str, height_suffix: str = "Z"
 ) -> pd.DataFrame:
@@ -56,7 +56,7 @@ def load_df(
     return raw_df
 
 
-@st.cache_data
+@st.cache_data(ttl=60 * 4, max_entries=5)
 def preprocess_df(raw_df: pd.DataFrame) -> pd.DataFrame:
     """divide by 1000 to get measurements in meters"""
     preprocessed_df = raw_df.copy()
@@ -69,7 +69,7 @@ def preprocess_df(raw_df: pd.DataFrame) -> pd.DataFrame:
     return preprocessed_df
 
 
-@st.cache_data
+@st.cache_data(ttl=60 * 4, max_entries=5)
 def extract_features(
     out_df: pd.DataFrame,
     magents_labels: Union[str, List[str]],
@@ -105,10 +105,8 @@ def extract_features(
     return out_df
 
 
-@st.cache_resource
-def transform_df2plotly(
-    input_df: pd.DataFrame, groups_info
-) -> pd.DataFrame:
+@st.cache_resource(ttl=60 * 4, max_entries=5)
+def transform_df2plotly(input_df: pd.DataFrame, groups_info) -> pd.DataFrame:
     """Transform a dataframe into the plotly best suited format
     |   Frame    |   axis i (um)  |   axis i+1 (um)  |   axis i+2(um)   |   eid   | optional [mid]
 
@@ -165,7 +163,9 @@ def transform_df2plotly(
                     if element_id == "Helmet"
                     else element_id
                 )
-                mid = group_name.split(" - ")[1] if element_id == "Helmet" else group_name
+                mid = (
+                    group_name.split(" - ")[1] if element_id == "Helmet" else group_name
+                )
                 group["mid"] = mid
             group["eid"] = eid
             groups.append(group)
@@ -173,7 +173,7 @@ def transform_df2plotly(
     return out_df
 
 
-@st.cache_resource
+@st.cache_resource(ttl=60 * 4, max_entries=5)
 def get_best_markers(input_df: pd.DataFrame):
     """Get markers with lowest amount of NaN values"""
     x_coordinate = input_df[input_df.columns[input_df.columns.str.endswith("X")]]
@@ -196,7 +196,7 @@ def get_best_markers(input_df: pd.DataFrame):
     return nan_counter_by_marker
 
 
-@st.cache_resource
+@st.cache_resource(ttl=60 * 4, max_entries=5)
 def filter_best_markers(elements_cat_df: pd.DataFrame, nan_counter_by_marker: Dict):
     """Return data from the best marker based on the min number of nans"""
     elements_filtered_by_best_marker = []
