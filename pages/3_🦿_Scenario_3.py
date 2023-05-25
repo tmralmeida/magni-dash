@@ -40,7 +40,7 @@ input_file = st.sidebar.selectbox(
     label="File", options=files_target, key="input_file", label_visibility="visible"
 )
 if st.session_state.input_file:
-    tab_trajectories, tab_eyt_sync3d = st.tabs(["2D Trajectory data", "EYT data"])
+    tab_trajectories, tab_eyt_sync3d = st.tabs(["2D Trajectory data", "Eyetracking"])
 
     df_path = os.path.join(SCENARIO3_PATH, input_file)
     raw_df = pd.read_csv(df_path, index_col="Frame")
@@ -51,9 +51,9 @@ if st.session_state.input_file:
         | (preprocessed_df.columns.str.startswith("LO1"))
     ].tolist()
     moving_agents_labels = set(map(lambda x: x.split(" - ")[0], moving_agents))
-    moving_agents_labels = filter(
+    moving_agents_labels = list(filter(
         lambda x: len(x.split(" ")) == 1, moving_agents_labels
-    )
+    ))
 
     moving_agents_cols = preprocessed_df.columns[
         (preprocessed_df.columns.str.endswith(" X"))
@@ -62,9 +62,10 @@ if st.session_state.input_file:
     ]
     features_df = extract_features(
         preprocessed_df[["Time"] + moving_agents_cols.tolist()].copy(),
-        magents_labels=list(moving_agents_labels),
-        darko_label="DARKO",
+        magents_labels=moving_agents_labels,
+        darko_label="DARKO_Robot",
     )
+    features_df.index = features_df["Frame"]
     features_cat = preprocessed_df.join(features_df)
     rotations_cols = features_cat[
         features_cat.columns[features_cat.columns.str.contains(r"R(\d)")]
@@ -82,7 +83,7 @@ if st.session_state.input_file:
         element_id="LO1", markers_pattern_re=r"LO1 - (\d).*", label_sep=" - "
     )
     darko_info = GroupsInfo(
-        element_id="DARKO", markers_pattern_re=r"DARKO - (\d).*", label_sep=" - "
+        element_id="DARKO_Robot", markers_pattern_re=r"DARKO_Robot - (\d).*", label_sep=" - "
     )
     helmets_info = GroupsInfo(
         element_id="Helmet",

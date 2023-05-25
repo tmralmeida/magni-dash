@@ -63,8 +63,9 @@ if st.session_state.input_file:
     features_df = extract_features(
         preprocessed_df[["Time"] + moving_agents_cols.tolist()].copy(),
         magents_labels=list(moving_agents_labels),
-        darko_label="DARKO",
+        darko_label="DARKO_Robot",
     )
+    features_df.index = features_df["Frame"]
     features_cat = preprocessed_df.join(features_df)
     rotations_cols = features_cat[
         features_cat.columns[features_cat.columns.str.contains(r"R(\d)")]
@@ -82,7 +83,7 @@ if st.session_state.input_file:
         element_id="LO1", markers_pattern_re=r"LO1 - (\d).*", label_sep=" - "
     )
     darko_info = GroupsInfo(
-        element_id="DARKO", markers_pattern_re=r"DARKO - (\d).*", label_sep=" - "
+        element_id="DARKO_Robot", markers_pattern_re=r"DARKO_Robot - (\d).*", label_sep=" - "
     )
     helmets_info = GroupsInfo(
         element_id="Helmet",
