@@ -20,7 +20,6 @@ from config.constants import TRAJECTORY_SAMPLES_PATH
 
 SCENARIO3_PATH = os.path.join(TRAJECTORY_SAMPLES_PATH, "Scenario3")
 
-
 run_configs(scenario_id=3)
 with st.expander("See description"):
     st.write(
@@ -35,12 +34,17 @@ with st.expander("See description"):
 
 files = os.listdir(SCENARIO3_PATH)
 files_target = list(filter(lambda x: x.endswith(".csv"), files))
+lidar_files = list(filter(lambda x: x.endswith(".mp4"), files))
 
 input_file = st.sidebar.selectbox(
     label="File", options=files_target, key="input_file", label_visibility="visible"
 )
+tabs_list = ["2D Trajectory data", "Eyetracking"]
+if len(lidar_files) > 0:
+    tabs_list += ["LiDAR visualization"]
+
 if st.session_state.input_file:
-    tab_trajectories, tab_eyt_sync3d = st.tabs(["2D Trajectory data", "Eyetracking"])
+    tab_trajectories, tab_eyt, tab_lidar = st.tabs(tabs_list)
 
     df_path = os.path.join(SCENARIO3_PATH, input_file)
     raw_df = pd.read_csv(df_path, index_col="Frame")
@@ -51,9 +55,9 @@ if st.session_state.input_file:
         | (preprocessed_df.columns.str.startswith("LO1"))
     ].tolist()
     moving_agents_labels = set(map(lambda x: x.split(" - ")[0], moving_agents))
-    moving_agents_labels = list(filter(
-        lambda x: len(x.split(" ")) == 1, moving_agents_labels
-    ))
+    moving_agents_labels = list(
+        filter(lambda x: len(x.split(" ")) == 1, moving_agents_labels)
+    )
 
     moving_agents_cols = preprocessed_df.columns[
         (preprocessed_df.columns.str.endswith(" X"))
@@ -83,7 +87,9 @@ if st.session_state.input_file:
         element_id="LO1", markers_pattern_re=r"LO1 - (\d).*", label_sep=" - "
     )
     darko_info = GroupsInfo(
-        element_id="DARKO_Robot", markers_pattern_re=r"DARKO_Robot - (\d).*", label_sep=" - "
+        element_id="DARKO_Robot",
+        markers_pattern_re=r"DARKO_Robot - (\d).*",
+        label_sep=" - ",
     )
     helmets_info = GroupsInfo(
         element_id="Helmet",
@@ -133,8 +139,17 @@ if st.session_state.input_file:
         figs = get_multi_element_trajectories(best_makers_df)
         for fig in figs:
             st.plotly_chart(fig, use_container_width=True)
-    with tab_eyt_sync3d:
+    with tab_eyt:
         fig = get_eyt_trajectories_visualization(
             best_makers_df, transformed_eyt, cent_rot
         )
         st.plotly_chart(fig, use_container_width=True)
+
+    with tab_lidar:
+        input_lidar = st.sidebar.selectbox(
+            label="LiDAR File",
+            options=lidar_files,
+            key="input_lidar",
+            label_visibility="visible",
+        )
+        st.video(data=os.path.join(SCENARIO3_PATH, input_lidar))
