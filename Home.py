@@ -15,6 +15,9 @@ st.markdown(
    You can check our publications at:
    * [IEEE RO-MAN 2022 Workshop Proceedings: Towards Socially Intelligent Robots In Real World
    Applications (SIRRW 2022)](https://arxiv.org/abs/2208.14925)
+   * [IEEE ICCV 2023 Workshop Proceedings: Visual Perception for Navigation in Human Environments:
+   The JackRabbot Human Motion Forecasting Dataset
+   and Benchmark](https://openaccess.thecvf.com/content/ICCV2023W/JRDB/papers)
 """
 )
 layout_img = Image.open("images/logo.jpg")
