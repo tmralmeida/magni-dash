@@ -8,13 +8,15 @@ Dashboard for Magni dataset.
 - Source code: <https://github.com/tmralmeida/magni-dash>
 
 
-# Launch dashboard
+# Install
 
 Install [miniconda](http://docs.conda.io/en/latest/miniconda.html). Then, you can install all packages required by running:
 
 ```
 conda env create -f ex_environment.yml
 ```
+
+# Launching dashboard
 
 Set the [path](https://github.com/tmralmeida/magni-dash/blob/main/magni_dash/config/constants.py) to a directory with the following structure:
 
@@ -24,7 +26,6 @@ Set the [path](https://github.com/tmralmeida/magni-dash/blob/main/magni_dash/con
 --------
 
 
-# Launching dashboard
 
 Run:
 
