@@ -30,5 +30,5 @@ Set the [path](https://github.com/tmralmeida/magni-dash/blob/main/magni_dash/con
 Run:
 
 ```
-streamlit run magni_dash/Welcome.py
+streamlit run Home.py
 ```

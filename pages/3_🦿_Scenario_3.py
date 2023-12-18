@@ -47,7 +47,12 @@ if st.session_state.input_file:
     tab_trajectories, tab_eyt, tab_lidar = st.tabs(tabs_list)
 
     df_path = os.path.join(SCENARIO3_PATH, input_file)
-    raw_df = pd.read_csv(df_path, index_col="Frame")
+    raw_df = pd.read_csv(
+        df_path,
+        sep=",",
+        header=16,
+        index_col="Frame",
+    )
     best_markers_counter = get_best_markers(input_df=raw_df)
     preprocessed_df = preprocess_df(raw_df.copy())
     moving_agents = preprocessed_df.columns[

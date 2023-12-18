@@ -52,7 +52,12 @@ if st.session_state.input_file:
     tab_trajectories, tab_eyt_sync3d = st.tabs(["2D Trajectory data", "Eyetracking"])
 
     df_path = os.path.join(SCENARIO4_PATH, input_file)
-    raw_df = pd.read_csv(df_path, index_col="Frame")
+    raw_df = pd.read_csv(
+        df_path,
+        sep=",",
+        header=16,
+        index_col="Frame",
+    )
     best_markers_counter = get_best_markers(input_df=raw_df)
     preprocessed_df = preprocess_df(raw_df.copy())
     moving_agents = preprocessed_df.columns[
@@ -60,9 +65,9 @@ if st.session_state.input_file:
         | (preprocessed_df.columns.str.startswith("LO1"))
     ].tolist()
     moving_agents_labels = set(map(lambda x: x.split(" - ")[0], moving_agents))
-    moving_agents_labels = list(filter(
-        lambda x: len(x.split(" ")) == 1, moving_agents_labels
-    ))
+    moving_agents_labels = list(
+        filter(lambda x: len(x.split(" ")) == 1, moving_agents_labels)
+    )
 
     moving_agents_cols = preprocessed_df.columns[
         (preprocessed_df.columns.str.endswith(" X"))
@@ -89,7 +94,9 @@ if st.session_state.input_file:
         + rotations_cols
     ]
     darko_info = GroupsInfo(
-        element_id="DARKO_Robot", markers_pattern_re=r"DARKO_Robot - (\d).*", label_sep=" - "
+        element_id="DARKO_Robot",
+        markers_pattern_re=r"DARKO_Robot - (\d).*",
+        label_sep=" - ",
     )
     helmets_info = GroupsInfo(
         element_id="Helmet",
