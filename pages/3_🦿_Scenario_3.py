@@ -39,9 +39,7 @@ lidar_files = list(filter(lambda x: x.endswith(".mp4"), files))
 input_file = st.sidebar.selectbox(
     label="File", options=files_target, key="input_file", label_visibility="visible"
 )
-tabs_list = ["2D Trajectory data", "Eyetracking"]
-if len(lidar_files) > 0:
-    tabs_list += ["LiDAR visualization"]
+tabs_list = ["2D Trajectory data", "Eyetracking", "LiDAR visualization"]
 
 if st.session_state.input_file:
     tab_trajectories, tab_eyt, tab_lidar = st.tabs(tabs_list)
@@ -151,10 +149,4 @@ if st.session_state.input_file:
         st.plotly_chart(fig, use_container_width=True)
 
     with tab_lidar:
-        input_lidar = st.sidebar.selectbox(
-            label="LiDAR File",
-            options=lidar_files,
-            key="input_lidar",
-            label_visibility="visible",
-        )
-        st.video(data=os.path.join(SCENARIO3_PATH, input_lidar))
+        st.video(data=os.path.join(SCENARIO3_PATH, lidar_files[0]))
