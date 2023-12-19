@@ -13,11 +13,13 @@ st.markdown(
    we augment the environment with semantic context, such
    as one-way passages and yellow tape markings for areas of caution.
    You can check our publications at:
-   * [IEEE RO-MAN 2022 Workshop Proceedings: Towards Socially Intelligent Robots In Real World
+   * [IEEE RO-MAN '22 Workshop Proceedings: Towards Socially Intelligent Robots In Real World
    Applications (SIRRW 2022)](https://arxiv.org/abs/2208.14925)
-   * [IEEE ICCV 2023 Workshop Proceedings: Visual Perception for Navigation in Human Environments:
+   * [IEEE ICCV '23 Workshop Proceedings: Visual Perception for Navigation in Human Environments:
    The JackRabbot Human Motion Forecasting Dataset
    and Benchmark](https://openaccess.thecvf.com/content/ICCV2023W/JRDB/papers)
+   * [IEEE RO-MAN '23: Advantages of Multimodal versus Verbal-Only Robot-to-Human Communication
+   with an Anthropomorphic Robotic Mock Driver](https://ieeexplore.ieee.org/abstract/document/10309629/?casa_token=V-OAu7v4-T0AAAAA:S_21Zd_uqZFQErXjZVjcurqfjm2zyrG8a29f5eFbLH2yDhJpVya4UVQKysIWN7P1_afNARDCKaw)
 """
 )
 layout_img = Image.open("images/logo.jpg")
