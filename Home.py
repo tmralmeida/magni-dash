@@ -17,7 +17,7 @@ st.markdown(
    Applications (SIRRW 2022)](https://arxiv.org/abs/2208.14925)
    * [IEEE ICCV '23 Workshop Proceedings: Visual Perception for Navigation in Human Environments:
    The JackRabbot Human Motion Forecasting Dataset
-   and Benchmark](https://openaccess.thecvf.com/content/ICCV2023W/JRDB/papers)
+   and Benchmark](https://ieeexplore.ieee.org/document/10350939)
    * [IEEE RO-MAN '23: Advantages of Multimodal versus Verbal-Only Robot-to-Human Communication
    with an Anthropomorphic Robotic Mock Driver](https://ieeexplore.ieee.org/abstract/document/10309629/?casa_token=V-OAu7v4-T0AAAAA:S_21Zd_uqZFQErXjZVjcurqfjm2zyrG8a29f5eFbLH2yDhJpVya4UVQKysIWN7P1_afNARDCKaw)
 """
