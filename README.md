@@ -6,6 +6,7 @@ Dashboard for Magni dataset.
 
 - Web app: <https://magni-dash.streamlit.app>
 - Source code: <https://github.com/tmralmeida/magni-dash>
+- [Dataset website](http://thor.oru.se/magni.html)
 
 
 # Install
