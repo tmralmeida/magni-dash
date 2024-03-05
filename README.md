@@ -1,12 +1,11 @@
 
 # magni-dash
-Dashboard for Magni dataset.
+Dashboard for [THÖR-MAGNI dataset](http://thor.oru.se/magni.html).
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://magni-dash.streamlit.app)
 
 - Web app: <https://magni-dash.streamlit.app>
 - Source code: <https://github.com/tmralmeida/magni-dash>
-- [Dataset website](http://thor.oru.se/magni.html)
 
 
 # Install
