@@ -32,8 +32,8 @@ st.markdown(
 
    Also, our publications using the dataset:
    * [IEEE Robotics and Automation Letters (RA-L) '24: Trajectory Prediction for Heterogeneous
-   Agents: A Performance Analysis on Small and Imbalanced Datasets]
-   (https://ieeexplore.ieee.org/abstract/document/10545544)
+   Agents: A Performance Analysis on Small and
+   Imbalanced Datasets](https://ieeexplore.ieee.org/abstract/document/10545544)
    * [IEEE RO-MAN '24: "Human Gaze and Head Rotation during Navigation, Exploration and Object
    Manipulation in Shared Environments with Robots"](https://arxiv.org/abs/2406.06300)
    * [IEEE RO-MAN '23: "Advantages of Multimodal versus Verbal-Only Robot-to-Human Communication
