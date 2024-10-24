@@ -2,7 +2,7 @@ import streamlit as st
 from PIL import Image
 
 st.set_page_config(page_title="Home")
-st.write("# THÖR-Magni Dashboard")
+st.write("# THÖR-MAGNI Dashboard")
 
 
 st.markdown(
