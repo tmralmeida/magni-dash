@@ -4,6 +4,22 @@ from PIL import Image
 st.set_page_config(page_title="Home")
 st.write("# THÖR-MAGNI Dashboard")
 
+web, paper, tb, challenge = st.columns(4)
+web.link_button(
+    "Webpage", "http://thor.oru.se/magni.html", icon="🖥️"
+)
+paper.link_button(
+    "Paper", "https://journals.sagepub.com/doi/10.1177/02783649241274794", icon="📄"
+)
+tb.link_button(
+    "Toolbox", "https://github.com/tmralmeida/thor-magni-tools", icon="🔧"
+)
+challenge.link_button(
+    "Challenge",
+    "https://github.com/tmralmeida/lhmp-thor-magni-challenge-extras",
+    icon="🔥",
+)
+
 
 st.markdown(
     """
@@ -19,18 +35,7 @@ st.markdown(
     to facilitate factor isolation. The dataset includes many social human-human and human-robot
     interaction scenarios, rich context annotations, and multi-modal data, such as walking
     trajectories, gaze-tracking data, and lidar and camera streams recorded from a mobile robot.
-    We also provide a set of tools for visualization and processing of the recorded data.
-    THÖR-MAGNI is, to the best of our knowledge, unique in the amount and diversity of sensor data
-    collected in a contextualized and socially dynamic environment, capturing natural human-robot
-    interactions.
-   You can check our publications describing the dataset at:
-   * [The International Journal of Robotics Research (IJRR) '24: "THÖR-MAGNI: A large-scale indoor
-   motion capture recording of human movement and robot
-   interaction"](https://journals.sagepub.com/doi/10.1177/02783649241274794)
-   * [IEEE RO-MAN '22 Workshop Proceedings: Towards Socially Intelligent Robots In Real World
-   Applications (SIRRW 2022)](https://arxiv.org/abs/2208.14925)
-
-   Also, our publications using the dataset:
+   You can check our publications using the dataset:
    * [IEEE Robotics and Automation Letters (RA-L) '24: Trajectory Prediction for Heterogeneous
    Agents: A Performance Analysis on Small and
    Imbalanced Datasets](https://ieeexplore.ieee.org/abstract/document/10545544)
@@ -44,4 +49,4 @@ st.markdown(
 """
 )
 layout_img = Image.open("images/logo.jpg")
-st.image(layout_img, use_column_width=True)
+st.image(layout_img, use_container_width=True)
